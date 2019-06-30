@@ -72,7 +72,7 @@
 
 				cloud_blur /= 9.0f;
 
-				return float4(cloud0.xy, saturate(cloud0.z), cloud_blur.w);
+				return float4(cloud_blur.xy, saturate(cloud0.z), cloud_blur.w);
             }
             ENDCG
         }

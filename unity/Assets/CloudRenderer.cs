@@ -250,7 +250,7 @@ public class CloudRenderer : MonoBehaviour
         {
             Vector3 pos = cam.WorldToScreenPoint(clouds[i].transform.position);
             if (pos.x > -100 && pos.x < (cam.pixelWidth + 100) && pos.y > -100 && pos.y < (cam.pixelHeight + 100) &&
-                pos.z > -100)
+                pos.z > -300)
             {
                 _cloudVisible[i] = true;
             } else

@@ -36,7 +36,7 @@
                 float2 uv : TEXCOORD0;
                 UNITY_FOG_COORDS(1)
                 float4 vertex : SV_POSITION;
-				float3 info : TEXCOORD1;//x transmit light, y transmit sky, z depth
+				float3 info : TEXCOORD2;//x transmit light, y transmit sky, z depth
             };
 
             sampler2D _MainTex;
@@ -50,6 +50,7 @@
             {
                 v2f o;
 				float3 viewNormal = normalize(mul((float3x3)UNITY_MATRIX_IT_MV, v.normal));
+				float3 worldNormal = UnityObjectToWorldNormal(v.normal);
 				float3 viewPos = UnityObjectToViewPos(v.vertex);
 				float linearDepth = saturate(-viewPos.z * _ProjectionParams.w);
                 o.vertex = mul(UNITY_MATRIX_P,float4( viewPos,1));
@@ -65,10 +66,16 @@
 				float LdOc = dot(lightDir, normalize(worldSpaceOccDir));
 				float transmittanceDistLight = pow(LdOc / 2 + 0.5, _CloudOcclLobePower)*occDist + _CloudTransmissionBias;
 				float transmitLight = exp(-transmittanceDistLight * _CloudExtinct);
+				float LdN = saturate(dot(lightDir, worldNormal));
+				float halfLambertLight = lerp(0.8f, 1.0f, LdN);
+				transmitLight *= halfLambertLight;
 
 				float SldOc = dot(float3(0,-1,0), normalize(worldSpaceOccDir));
 				float transmittanceDistSky = pow(SldOc / 2 + 0.5, _CloudOcclLobePower)*occDist + _CloudTransmissionBias;
 				float transmitSky = exp(-transmittanceDistSky * _CloudExtinct);
+				float SldN = saturate(dot(float3(0, -1, 0), worldNormal));
+				float halfLambertSky = lerp(0.8f, 1.0f, SldN);
+				transmitSky *= halfLambertSky;
 
 				o.info = float3(transmitLight, transmitSky, linearDepth);
                 return o;
