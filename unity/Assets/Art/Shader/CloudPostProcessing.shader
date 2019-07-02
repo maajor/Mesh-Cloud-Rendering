@@ -59,20 +59,39 @@
             {
 				float4 cloud0 = tex2D(_CloudTarget, i.uv);
 				float blur_range = saturate(cloud0.w) * 3.0f;
+				blur_range = 2.0f;
 
 				float4 cloud_blur = cloud0;
-				cloud_blur += tex2D(_CloudTarget, i.uv + i.uv_offset1.xy * blur_range);
-				cloud_blur += tex2D(_CloudTarget, i.uv + i.uv_offset1.zw * blur_range);
-				cloud_blur += tex2D(_CloudTarget, i.uv + i.uv_offset2.xy * blur_range);
-				cloud_blur += tex2D(_CloudTarget, i.uv + i.uv_offset2.zw * blur_range);
-				cloud_blur += tex2D(_CloudTarget, i.uv + i.uv_offset3.xy * blur_range);
-				cloud_blur += tex2D(_CloudTarget, i.uv + i.uv_offset3.zw * blur_range);
-				cloud_blur += tex2D(_CloudTarget, i.uv + i.uv_offset4.xy * blur_range);
-				cloud_blur += tex2D(_CloudTarget, i.uv + i.uv_offset4.zw * blur_range);
+				float4 cloud_offset = 0;
+				float shrink = cloud0.z;
+				cloud_offset = tex2D(_CloudTarget, i.uv + i.uv_offset1.xy * blur_range);
+				cloud_blur += cloud_offset;
+				shrink = min(shrink, cloud_offset.z);
+				cloud_offset  = tex2D(_CloudTarget, i.uv + i.uv_offset1.zw * blur_range);
+				cloud_blur += cloud_offset;
+				shrink = min(shrink, cloud_offset.z);
+				cloud_offset = tex2D(_CloudTarget, i.uv + i.uv_offset2.xy * blur_range);
+				cloud_blur += cloud_offset;
+				shrink = min(shrink, cloud_offset.z);
+				cloud_offset = tex2D(_CloudTarget, i.uv + i.uv_offset2.zw * blur_range);
+				cloud_blur += cloud_offset;
+				shrink = min(shrink, cloud_offset.z);
+				cloud_offset = tex2D(_CloudTarget, i.uv + i.uv_offset3.xy * blur_range);
+				cloud_blur += cloud_offset;
+				shrink = min(shrink, cloud_offset.z);
+				cloud_offset = tex2D(_CloudTarget, i.uv + i.uv_offset3.zw * blur_range);
+				cloud_blur += cloud_offset;
+				shrink = min(shrink, cloud_offset.z);
+				cloud_offset = tex2D(_CloudTarget, i.uv + i.uv_offset4.xy * blur_range);
+				cloud_blur += cloud_offset;
+				shrink = min(shrink, cloud_offset.z);
+				cloud_offset = tex2D(_CloudTarget, i.uv + i.uv_offset4.zw * blur_range);
+				cloud_blur += cloud_offset;
+				shrink = min(shrink, cloud_offset.z);
 
 				cloud_blur /= 9.0f;
 
-				return float4(cloud_blur.xy, saturate(cloud0.z), cloud_blur.w);
+				return float4(cloud0.xy, saturate(shrink), cloud_blur.w);
             }
             ENDCG
         }
@@ -116,6 +135,10 @@
 				float4 cloud = tex2D(_CloudBlured, i.uv);
 				float4 color = lerp(unity_AmbientGround, _LightColor0, cloud.x) + lerp(unity_AmbientGround, unity_AmbientSky, cloud.y);
 				float4 main = tex2D(_Background, i.uv);
+
+				float viewZ = cloud.w / _ProjectionParams.w;
+				float fogParam = saturate(unity_FogParams.w + viewZ * unity_FogParams.z);
+				color = lerp(unity_FogColor, color, fogParam);
 
 				return lerp(main, color, cloud.b);
 				

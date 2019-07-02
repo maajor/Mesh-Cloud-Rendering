@@ -19,6 +19,7 @@ Some animations(GIFs, please wait for loading)
 ![1](/unity/Recordings/gif_animation_002.gif)   
 ![2](/unity/Recordings/gif_animation_003.gif)   
 ![3](/unity/Recordings/gif_animation_004.gif)   
+![3](/unity/Recordings/gif_animation_005.gif)  
 
 My blog [On Mesh Cloud Rendering – Reimplement Sea Of Thieves’ Cloud](http://ma-yidong.com/2019/06/30/on-mesh-cloud-rendering-reimplement-sea-of-thieves-cloud/)
 

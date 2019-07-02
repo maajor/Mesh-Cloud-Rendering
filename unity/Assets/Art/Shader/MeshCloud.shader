@@ -67,14 +67,14 @@
 				float transmittanceDistLight = pow(LdOc / 2 + 0.5, _CloudOcclLobePower)*occDist + _CloudTransmissionBias;
 				float transmitLight = exp(-transmittanceDistLight * _CloudExtinct);
 				float LdN = saturate(dot(lightDir, worldNormal));
-				float halfLambertLight = lerp(0.8f, 1.0f, LdN);
+				float halfLambertLight = lerp(0.5f, 1.0f, LdN);
 				transmitLight *= halfLambertLight;
 
 				float SldOc = dot(float3(0,-1,0), normalize(worldSpaceOccDir));
 				float transmittanceDistSky = pow(SldOc / 2 + 0.5, _CloudOcclLobePower)*occDist + _CloudTransmissionBias;
 				float transmitSky = exp(-transmittanceDistSky * _CloudExtinct);
 				float SldN = saturate(dot(float3(0, -1, 0), worldNormal));
-				float halfLambertSky = lerp(0.8f, 1.0f, SldN);
+				float halfLambertSky = lerp(0.5f, 1.0f, SldN);
 				transmitSky *= halfLambertSky;
 
 				o.info = float3(transmitLight, transmitSky, linearDepth);
